@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Product Page</title>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Our Store</h1>
+        <div class="cart-icon">
+            <a href="/cart">
+                <img src="{{ url_for('static', filename='images/cart.png') }}" alt="Cart">
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <div class="product-container">
+            {% for product in products %}
+            <div class="product-card">
+                <img src="{{ url_for('static', filename='images/' + product.image) }}" alt="{{ product.name }}">
+
+                <h2>{{ product.name }}</h2>
+                <p>Price: ₹{{ product.price }}</p>
+                <a href="{{ url_for('add_to_cart', product_id=product.id) }}">
+                    <button class="add-to-cart">Add to Cart</button>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 VCC-Assignment-3 Store. All rights reserved.</p>
+    </footer>
+
+    <script>
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                fetch('/clear_cart', { method: 'POST' }); 
+            }
+        });
+    </script>
+    
+</body>
+</html>

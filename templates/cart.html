@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Your Cart</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <header>
+        <h1>Your Shopping Cart</h1>
+        <div class="cart-icon">
+            <a href="/">
+                <img src="{{ url_for('static', filename='images/home.png') }}" alt="Home">
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <div class="cart-container">
+            {% if cart_items %}
+                <ul>
+                    {% for item in cart_items %}
+                    <li>
+                        <img src="{{ url_for('static', filename='images/' + item.image.split('/')[-1]) }}" alt="{{ item.name }}">
+
+                        <span>{{ item.name }} - ₹{{ item.price }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <div class="cart-summary">
+                    <h2>Grand Total: ₹{{ grand_total }}</h2>
+                    <button class="pay-now" onclick="payNow()">Pay Now</button>
+
+                </div>
+
+            {% else %}
+                <p>Your cart is empty!</p>
+            {% endif %}
+        </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2024 VCC-Assignment-3 Store. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function payNow() {
+            fetch('/pay', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Payment Successful') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Payment Successful',
+                        html: `Thank you! Transaction ID: <strong>${data.transaction_id}</strong>`,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload();
+                    });
+                }
+            });
+        }
+    </script>
+    
+    
+    
+</body>
+</html>
